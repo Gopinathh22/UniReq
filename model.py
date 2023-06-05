@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 # Create the database engine
-engine = create_engine("sqlite:///instance/unireq.db")
+engine = create_engine("sqlite:///unireq.db")
 
 # Create a base class for declarative models
 Base = declarative_base()

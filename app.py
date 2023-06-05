@@ -1,10 +1,34 @@
 from flask import Flask, g, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import inspect
+from sqlalchemy import create_engine
+from flask import jsonify
 
 
 app = Flask(__name__)
 app.secret_key = "somesecretkeythatonlyishouldknow"
+app.config[
+    "SQLALCHEMY_DATABASE_URI"
+] = "sqlite:////Users/gopinath.h03/Library/CloudStorage/OneDrive-IMC/1st Year/UniReq/unireq.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db = SQLAlchemy(app)
+
+with app.app_context():
+    db.create_all()
+
+
+class Country(db.Model):
+    __tablename__ = "countries"
+    country_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+
+    def as_dict(self):
+        return {"country_id": self.country_id, "name": self.name}
+
+
+with app.app_context():
+    db.create_all()
+session = db.session
 
 
 @app.route("/")
@@ -12,13 +36,13 @@ def home():
     return render_template("home.html")
 
 
-@app.before_request
-def before_request():
-    g.user = None
+# @app.before_request
+# def before_request():
+#     g.user = None
 
-    if "user_id" in session:
-        user = [x for x in users if x.id == session["user_id"]][0]
-        g.user = user
+#     if "user_id" in session:
+#         user = [x for x in users if x.id == session["user_id"]][0]
+#         g.user = user
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -45,6 +69,13 @@ def profile():
         return redirect(url_for("login"))
 
     return render_template("profile2.html")
+
+
+@app.route("/index")
+def index():
+    countries = Country.query.all()
+    country_list = [country.as_dict() for country in countries]
+    return jsonify(country_list)
 
 
 class User:

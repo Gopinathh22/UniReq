@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from model import Country, University, Course, AdmissionCriteria, User, Score, Feedback
 
 # Create the database engine
-engine = create_engine("sqlite:///instance/unireq.db")
+engine = create_engine("sqlite:///unireq.db")
 
 # Create a session factory
 Session = sessionmaker(bind=engine)
