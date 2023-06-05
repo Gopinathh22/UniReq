@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Include Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Country List</h1>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Country ID</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for country in countries %}
+          <tr>
+            <td>{{ country.country_id }}</td>
+            <td>{{ country.name }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <h1>University List</h1>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>University ID</th>
+            <th>Name</th>
+            <th>Country</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for university in universities %}
+          <tr>
+            <td>{{ university.university_id }}</td>
+            <td>{{ university.name }}</td>
+            <td>{{ university.country.name }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <h1>User List</h1>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Password</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ user.user_id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.password }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <h1>Course List</h1>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Course ID</th>
+            <th>Name</th>
+            <th>University</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for course in courses %}
+          <tr>
+            <td>{{ course.course_id }}</td>
+            <td>{{ course.name }}</td>
+            <td>{{ course.university.name }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <h1>Admission Criteria List</h1>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Criteria ID</th>
+            <th>Course</th>
+            <th>IB Score</th>
+            <th>Subject Requirements</th>
+            <th>Language Proficiency</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for criteria in admission_criteria %}
+          <tr>
+            <td>{{ criteria.admission_criteria_id }}</td>
+            <td>{{ criteria.course.name }}</td>
+            <td>{{ criteria.IB_Score }}</td>
+            <td>{{ criteria.subject_requirements }}</td>
+            <td>{{ criteria.language_proficiency }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <h1>Feedback List</h1>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Feedback ID</th>
+            <th>User</th>
+            <th>Admission Criteria</th>
+            <th>Feedback</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for feedback in feedbacks %}
+          <tr>
+            <td>{{ feedback.feedback_id }}</td>
+            <td>{{ feedback.user.username }}</td>
+            <td>{{ feedback.admission_criteria.admission_criteria_id }}</td>
+            <td>{{ feedback.feedback }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>
