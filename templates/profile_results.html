@@ -2,20 +2,71 @@
 <html>
   <head>
     <title>Profile Results</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
   </head>
   <body>
-    <h1>Profile Results</h1>
-    <h2>Filter Choices:</h2>
-    <p>Country: {{ country }}</p>
-    <p>Course: {{ course }}</p>
-    <p>Language Proficiency: {{ language }}</p>
-    <p>IB Score: {{ ib_score }}</p>
+    <div class="container">
+      <h1>Profile Results</h1>
+      <h2>Filter Choices:</h2>
+      <div class="row">
+        <div class="col-sm-6">
+          <p>Country: {{ country }}</p>
+        </div>
+        <div class="col-sm-6">
+          <p>Course: {{ course }}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <p>Language Proficiency: {{ language }}</p>
+        </div>
+        <div class="col-sm-6">
+          <p>IB Score: {{ ib_score }}</p>
+        </div>
+      </div>
 
-    <h2>Filtered Universities:</h2>
-    <ul>
-      {% for university in universities %}
-      <li>{{ university.name }}</li>
-      {% endfor %}
-    </ul>
+      <h2>Filtered Universities:</h2>
+      <ul class="list-group">
+        {% for university in universities %}
+        <li class="list-group-item">{{ university.name }}</li>
+        {% endfor %}
+      </ul>
+
+      <h2>Feedback:</h2>
+      <form id="feedbackForm">
+        <div class="form-group">
+          <label for="feedbackText">Your Feedback:</label>
+          <textarea class="form-control" id="feedbackText" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit Feedback</button>
+      </form>
+    </div>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#feedbackForm").submit(function (event) {
+          event.preventDefault();
+          var feedback = $("#feedbackText").val();
+          // Use AJAX or fetch API to send the feedback data to the server and add it to the database
+          // Example AJAX code:
+          $.ajax({
+            url: "/submit-feedback",
+            method: "POST",
+            data: { feedback: feedback },
+            success: function (response) {
+              // Handle the success response if needed
+            },
+            error: function (xhr, status, error) {
+              // Handle the error if needed
+            },
+          });
+        });
+      });
+    </script>
   </body>
 </html>

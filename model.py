@@ -77,5 +77,23 @@ class Feedback(Base):
     admission_criteria = relationship("AdmissionCriteria")
 
 
+#### part of app.py###
+# class User(db.Model):
+#     __tablename__ = "users"
+#     user_id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String)
+#     password = db.Column(db.String)
+
+
+# class Feedback(db.Model):
+#     __tablename__ = "feedback"
+#     feedback_id = db.Column(db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
+#     admission_criteria_id = db.Column(
+#         db.Integer, db.ForeignKey("admission_criteria.admission_criteria_id")
+#     )
+#     feedback = db.Column(db.String)
+#     user = db.relationship("User")
+
 # Create the tables in the database
 Base.metadata.create_all(engine)

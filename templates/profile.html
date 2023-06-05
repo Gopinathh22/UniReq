@@ -129,7 +129,7 @@
 
               <div class="input-field">
                 <div class="input-select">
-                  <select data-trigger="" name="choices-single-defaul">
+                  <select data-trigger="" name="country" required>
                     <option placeholder="" value="">{{ country.name|capitalize }}</option>
                     {% for option in country.options %}
                     <option>{{ option }}</option>
@@ -142,7 +142,7 @@
 
             <div class="input-field">
               <div class="input-select">
-                <select data-trigger="" name="choices-single-defaul">
+                <select data-trigger="" name="course" required>
                   <option placeholder="" value="">{{ course.name|capitalize }}</option>
                   {% for option in course.options %}
                   <option>{{ option }}</option>
@@ -153,7 +153,7 @@
 
             <div class="input-field">
               <div class="input-select">
-                <select data-trigger="" name="choices-single-defaul">
+                <select data-trigger="" name="language" required>
                   <option placeholder="" value="">{{ language.name|capitalize }}</option>
                   {% for option in language.options %}
                   <option>{{ option }}</option>
@@ -165,7 +165,7 @@
 
               <div class="input-field">
                 <div class="input-select">
-                  <select data-trigger="" name="choices-single-defaul">
+                  <select data-trigger="" name="ib_score" required>
                     <option placeholder="" value="">{{ ib_score.name }}</option>
                     {% for option in ib_score.options %}
                     <option>{{ option }}</option>
@@ -180,7 +180,7 @@
                 <div class="result-count"><span>108 </span>results</div>
                 <div class="group-btn">
                   <button class="btn-delete" id="delete">RESET</button>
-                  <button type="submit" class="btn-search">SEARCH</button>
+                  <button type="submit" class="btn-search">SEARCH</button> 
                 </div>
               </div>
             </div>

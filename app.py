@@ -21,20 +21,20 @@ app.config[
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+migrate = Migrate(app, db)  # Not sure if this is needed
 
 
 with app.app_context():
     db.create_all()
 
 
-class Country(db.Model):
+class Country(db.Model):  # This is the table for countries
     __tablename__ = "countries"
     country_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
 
 
-class University(db.Model):
+class University(db.Model):  # This is the table for universities
     __tablename__ = "universities"
     university_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
@@ -42,7 +42,7 @@ class University(db.Model):
     country = db.relationship("Country")
 
 
-class Course(db.Model):
+class Course(db.Model):  # This is the table for courses
     __tablename__ = "courses"
     course_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
@@ -50,8 +50,8 @@ class Course(db.Model):
     university = db.relationship("University")
 
 
-class AdmissionCriteria(db.Model):
-    __tablename__ = "admission_criteria"  # look at the table structure
+class AdmissionCriteria(db.Model):  # This is the table for admission criteria
+    __tablename__ = "admission_criteria"
     admission_criteria_id = db.Column(db.Integer, primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey("courses.course_id"))
     IB_Score = db.Column(db.Integer)
@@ -60,7 +60,12 @@ class AdmissionCriteria(db.Model):
     course = db.relationship("Course")
 
 
-with app.app_context():
+class Feedback(db.Model):  # This is the table for feedback
+    id = db.Column(db.Integer, primary_key=True)
+    feedback_text = db.Column(db.String(200), nullable=False)
+
+
+with app.app_context():  # This is to create the tables
     db.create_all()
 
 
@@ -289,29 +294,31 @@ with app.app_context():
     db.session.commit()
 
 
-@app.route("/")
+@app.route("/")  # Home page
 def home():
     return render_template("home.html")
 
 
-@app.before_request
+@app.before_request  # Before request to check if user is logged in
 def before_request():
     g.user = None
 
-    if "user_id" in session:
+    if "user_id" in session:  # If user is logged in, set g.user to user
         user = [x for x in users if x.id == session["user_id"]][0]
         g.user = user
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"])  # Login page
 def login():
-    if request.method == "POST":
+    if request.method == "POST":  # If user submits login form
         session.pop("user_id", None)
 
         username = request.form["username"]
         password = request.form["password"]
 
-        user = [x for x in users if x.username == username][0]
+        user = [x for x in users if x.username == username][
+            0
+        ]  # Check if user exists and password is correct
         if user and user.password == password:
             session["user_id"] = user.id
             return redirect(url_for("profile"))
@@ -321,10 +328,12 @@ def login():
     return render_template("login.html")
 
 
-@app.route("/profile")
+@app.route("/profile")  # Profile page
 def profile():
     if not g.user:
-        return redirect(url_for("login"))
+        return redirect(
+            url_for("login")
+        )  # If user is not logged in, redirect to login page
 
     filter_options = [
         {"name": "Country", "options": ["Austria", "Germany"]},
@@ -334,7 +343,7 @@ def profile():
             "name": "IB Score",
             "options": ["36", "37", "38", "39", "40", "41", "42", "43", "44"],
         },
-    ]
+    ]  # Filter options
 
     country = {"name": "Country", "options": ["Austria", "Germany"]}
     course = {"name": "Course", "options": ["Informatics", "Chemistry"]}
@@ -342,7 +351,7 @@ def profile():
     ib_score = {
         "name": "IB Score",
         "options": ["36", "37", "38", "39", "40", "41", "42", "43", "44"],
-    }
+    }  # Filter options
 
     return render_template(
         "profile.html",
@@ -354,24 +363,14 @@ def profile():
     )
 
 
-@app.route("/profile/results", methods=["GET"])
+@app.route("/profile/results", methods=["GET"])  # Profile results page
 def profile_results():
-    # Get the filter choices from the URL parameters
-    # countries = Country.query.all()
-    # universities = University.query.all()
-    # courses = Course.query.all()
-    # admission_criteria = AdmissionCriteria.query.all()
-    # country = request.args.get("choices-single-defaul[0]")
-    # course = request.args.get("choices-single-defaul[1]")
-    # language = request.args.get("choices-single-defaul[2]")
-    # ib_score = request.args.get("choices-single-defaul[3]")
+    country = request.args.get("country")  # Get filter options from request
+    course = request.args.get("course")
+    language = request.args.get("language")
+    ib_score = request.args.get("ib_score")
 
-    country = "Austria"
-    course = "Informatics"
-    language = "German"
-    ib_score = "39"
-    # Query the database to retrieve the corresponding university
-
+    #  Query database for universities matching filter options
     universities = (
         db.session.query(University)
         .join(Country)
@@ -379,7 +378,7 @@ def profile_results():
         .join(AdmissionCriteria)
         .filter(Country.name == country)
         .filter(Course.name == course)
-        .filter(AdmissionCriteria.IB_Score == ib_score)
+        .filter(AdmissionCriteria.IB_Score >= ib_score)
         .filter(AdmissionCriteria.language_proficiency == language)
         .all()
     )
@@ -393,50 +392,17 @@ def profile_results():
         ib_score=ib_score,
     )
 
-    # if university:
-    # University found, do something with it
-    # For example, return the university name in the response
-    # return render_template(
-    #     "index.html",
-    #     countries=countries,
-    #     universities=universities,
-    #     courses=courses,
-    #     admission_criteria=admission_criteria,
-    # )
-    # return university.name
-    # else:
-    # University not found, handle the case accordingly
-    # return render_template(
-    #     "index.html",
-    #     countries=countries,
-    #     universities=universities,
-    #     courses=courses,
-    #     admission_criteria=admission_criteria,
-    # )
-    # return "University not found"
+
+@app.route("/submit-feedback", methods=["POST"])  # Submit feedback page
+def submit_feedback():
+    feedback_text = request.form["feedback"]
+    feedback = Feedback(feedback_text=feedback_text)
+    db.session.add(feedback)
+    db.session.commit()
+    return "Feedback submitted successfully"
 
 
-#####################################################################################
-
-# @app.route("/index")
-# def index():
-#     countries = Country.query.all()
-#     university = University.query.all()
-#     course = Course.query.all()
-#     admission_criteria = AdmissionCriteria.query.all()
-#     return render_template(
-#         "index.html",
-#         countries=countries,
-#         university=university,
-#         course=course,
-#         admission_criteria=admission_criteria,
-#     )
-
-
-#####################################################################################
-
-
-class User:
+class User:  # User class
     def __init__(self, id, username, password):
         self.id = id
         self.username = username
@@ -447,11 +413,12 @@ class User:
 
 
 users = []
-users.append(User(id=1, username="admin", password="admin"))
+users.append(User(id=1, username="admin", password="admin"))  # i am admin MUHHAHHAHAH
 
 
 #####################################################################################
-
+# Test
+#####################################################################################
 
 # def check_tables_exist():
 #     inspector = inspect(db.engine)
@@ -472,68 +439,18 @@ users.append(User(id=1, username="admin", password="admin"))
 
 
 #####################################################################################
+# how clear all the data in the database after each run
+#####################################################################################
+def clear_data():
+    with app.app_context():
+        meta = db.metadata
+        for table in reversed(meta.sorted_tables):
+            print("Clear table %s" % table)
+            db.session.execute(table.delete())
+        db.session.commit()
 
+
+# clear_data() #run this to clear the data in the database
 
 if __name__ == "__main__":
     app.run(debug=True)
-    # when closing the app, the database is deleted
-    # with app.app_context():
-    #     db.drop_all()
-
-# STRUCTURE OF THE DATABASE
-# **Table: Countries**
-
-# - country_id (Primary Key)
-# - name
-
-# | Country ID | Country Name |
-# | --- | --- |
-# |  |  |
-# |  |  |
-
-# **Table: Universities**
-
-# - university_id (Primary Key)
-# - name
-# - country_id (Foreign Key referencing Countries.country_id)
-
-# | Universities ID | University Name | Country ID |
-# | --- | --- | --- |
-# |  |  |  |
-# |  |  |  |
-
-# **Table: Courses**
-
-# - course_id (Primary Key)
-# - name
-# - university_id (Foreign Key referencing Universities.university_id)
-
-# | Course ID | Course Name | University ID |
-# | --- | --- | --- |
-# |  |  |  |
-# |  |  |  |
-
-# **Table: AdmissionCriteria**
-
-# - admission_criteria_id (Primary Key)
-# - course_id (Foreign Key referencing Courses.course_id)
-# - IB_Score
-# - subject_requirements
-# - language_proficiency
-
-# | Admission Criteria ID | Course ID | IB_Score | Subject Requirements | Language Proficiency |
-# | --- | --- | --- | --- | --- |
-# |  |  |  |  |  |
-# |  |  |  |  |  |
-
-# **Table: Feedback**
-
-# - feedback_id (Primary Key)
-# - user_id (Foreign Key referencing Users.user_id)
-# - admission_criteria_id (Foreign Key referencing AdmissionCriteria.admission_criteria_id)
-# - comment
-
-# | Feedback ID | User ID | Admission Criteria ID | Feedback |
-# | --- | --- | --- | --- |
-# |  |  |  |  |
-# |  |  |  |  |
