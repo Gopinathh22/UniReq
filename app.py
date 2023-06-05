@@ -1,4 +1,13 @@
-from flask import Flask, g, redirect, render_template, request, session, url_for
+from flask import (
+    Flask,
+    g,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+    jsonify,
+)
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from flask_migrate import Migrate
@@ -19,59 +28,265 @@ with app.app_context():
     db.create_all()
 
 
-# class Country(db.Model):
-#     __tablename__ = "countries"
-#     country_id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String)
+class Country(db.Model):
+    __tablename__ = "countries"
+    country_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
 
 
-# class University(db.Model):
-#     __tablename__ = "universities"
-#     university_id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String)
-#     country_id = db.Column(db.Integer, db.ForeignKey("countries.country_id"))
-#     country = db.relationship("Country")
+class University(db.Model):
+    __tablename__ = "universities"
+    university_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    country_id = db.Column(db.Integer, db.ForeignKey("countries.country_id"))
+    country = db.relationship("Country")
 
 
-# class User(db.Model):
-#     __tablename__ = "users"
-#     user_id = db.Column(db.Integer, primary_key=True)
-#     username = db.Column(db.String)
-#     password = db.Column(db.String)
+class Course(db.Model):
+    __tablename__ = "courses"
+    course_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    university_id = db.Column(db.Integer, db.ForeignKey("universities.university_id"))
+    university = db.relationship("University")
 
 
-# class Course(db.Model):
-#     __tablename__ = "courses"
-#     course_id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String)
-#     university_id = db.Column(db.Integer, db.ForeignKey("universities.university_id"))
-#     university = db.relationship("University")
+class AdmissionCriteria(db.Model):
+    __tablename__ = "admission_criteria"  # look at the table structure
+    admission_criteria_id = db.Column(db.Integer, primary_key=True)
+    course_id = db.Column(db.Integer, db.ForeignKey("courses.course_id"))
+    IB_Score = db.Column(db.Integer)
+    subject_requirements = db.Column(db.String)
+    language_proficiency = db.Column(db.String)
+    course = db.relationship("Course")
 
 
-# class AdmissionCriteria(db.Model):
-#     __tablename__ = "admission_criteria"  # look at the table structure
-#     admission_criteria_id = db.Column(db.Integer, primary_key=True)
-#     course_id = db.Column(db.Integer, db.ForeignKey("courses.course_id"))
-#     IB_Score = db.Column(db.Integer)
-#     subject_requirements = db.Column(db.String)
-#     language_proficiency = db.Column(db.String)
-#     course = db.relationship("Course")
+with app.app_context():
+    db.create_all()
 
 
-# class Feedback(db.Model):
-#     __tablename__ = "feedback"
-#     feedback_id = db.Column(db.Integer, primary_key=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
-#     admission_criteria_id = db.Column(
-#         db.Integer, db.ForeignKey("admission_criteria.admission_criteria_id")
-#     )
-#     feedback = db.Column(db.String)
-#     user = db.relationship("User")
+# Add countries
+austria = Country(name="Austria")
+germany = Country(name="Germany")
 
+with app.app_context():
+    db.session.add(austria)
+    db.session.add(germany)
+    db.session.commit()
 
-# with app.app_context():
-#     db.create_all()
-# session = db.session
+# Add universities
+university1 = University(name="University of Vienna", country=austria)
+university2 = University(name="University of Salzburg", country=austria)
+university3 = University(name="University of Innsbruck", country=austria)
+university4 = University(name="University of Graz", country=austria)
+university5 = University(name="University of Linz", country=austria)
+university6 = University(name="University of Munich", country=germany)
+university7 = University(name="University of Heidelberg", country=germany)
+university8 = University(name="University of Freiburg", country=germany)
+university9 = University(name="University of Tuebingen", country=germany)
+university10 = University(name="University of Goettingen", country=germany)
+
+with app.app_context():
+    db.session.add(university1)
+    db.session.add(university2)
+    db.session.add(university3)
+    db.session.add(university4)
+    db.session.add(university5)
+    db.session.add(university6)
+    db.session.add(university7)
+    db.session.add(university8)
+    db.session.add(university9)
+    db.session.add(university10)
+    db.session.commit()
+
+# Add courses
+course1 = Course(name="Informatics", university=university1)
+course2 = Course(name="Informatics", university=university2)
+course3 = Course(name="Informatics", university=university3)
+course4 = Course(name="Informatics", university=university4)
+course5 = Course(name="Informatics", university=university5)
+course6 = Course(name="Informatics", university=university6)
+course7 = Course(name="Informatics", university=university7)
+course8 = Course(name="Informatics", university=university8)
+course9 = Course(name="Informatics", university=university9)
+course10 = Course(name="Informatics", university=university10)
+course11 = Course(name="Chemistry", university=university1)
+course12 = Course(name="Chemistry", university=university2)
+course13 = Course(name="Chemistry", university=university3)
+course14 = Course(name="Chemistry", university=university4)
+course15 = Course(name="Chemistry", university=university5)
+course16 = Course(name="Chemistry", university=university6)
+course17 = Course(name="Chemistry", university=university7)
+course18 = Course(name="Chemistry", university=university8)
+course19 = Course(name="Chemistry", university=university9)
+course20 = Course(name="Chemistry", university=university10)
+
+with app.app_context():
+    db.session.add(course1)
+    db.session.add(course2)
+    db.session.add(course3)
+    db.session.add(course4)
+    db.session.add(course5)
+    db.session.add(course6)
+    db.session.add(course7)
+    db.session.add(course8)
+    db.session.add(course9)
+    db.session.add(course10)
+    db.session.add(course11)
+    db.session.add(course12)
+    db.session.add(course13)
+    db.session.add(course14)
+    db.session.add(course15)
+    db.session.add(course16)
+    db.session.add(course17)
+    db.session.add(course18)
+    db.session.add(course19)
+    db.session.add(course20)
+    db.session.commit()
+
+# Add admission criteria
+admission_criteria1 = AdmissionCriteria(
+    course=course1,
+    IB_Score=38,
+    subject_requirements="Programming and English",
+    language_proficiency="English",
+)
+admission_criteria2 = AdmissionCriteria(
+    course=course2,
+    IB_Score=41,
+    subject_requirements="Mathematics and English",
+    language_proficiency="English",
+)
+admission_criteria3 = AdmissionCriteria(
+    course=course3,
+    IB_Score=42,
+    subject_requirements="German",
+    language_proficiency="German",
+)
+admission_criteria4 = AdmissionCriteria(
+    course=course4,
+    IB_Score=43,
+    subject_requirements="Mathematics and English",
+    language_proficiency="English",
+)
+admission_criteria5 = AdmissionCriteria(
+    course=course5,
+    IB_Score=39,
+    subject_requirements="German",
+    language_proficiency="German",
+)
+admission_criteria6 = AdmissionCriteria(
+    course=course6,
+    IB_Score=38,
+    subject_requirements="Programming and English",
+    language_proficiency="English",
+)
+admission_criteria7 = AdmissionCriteria(
+    course=course7,
+    IB_Score=41,
+    subject_requirements="Mathematics and English",
+    language_proficiency="English",
+)
+admission_criteria8 = AdmissionCriteria(
+    course=course8,
+    IB_Score=42,
+    subject_requirements="German",
+    language_proficiency="German",
+)
+admission_criteria9 = AdmissionCriteria(
+    course=course9,
+    IB_Score=43,
+    subject_requirements="Mathematics and English",
+    language_proficiency="English",
+)
+admission_criteria10 = AdmissionCriteria(
+    course=course10,
+    IB_Score=39,
+    subject_requirements="German",
+    language_proficiency="German",
+)
+admission_criteria11 = AdmissionCriteria(
+    course=course11,
+    IB_Score=38,
+    subject_requirements="Programming and English",
+    language_proficiency="English",
+)
+admission_criteria12 = AdmissionCriteria(
+    course=course12,
+    IB_Score=41,
+    subject_requirements="Mathematics and English",
+    language_proficiency="English",
+)
+admission_criteria13 = AdmissionCriteria(
+    course=course13,
+    IB_Score=42,
+    subject_requirements="German",
+    language_proficiency="German",
+)
+admission_criteria14 = AdmissionCriteria(
+    course=course14,
+    IB_Score=43,
+    subject_requirements="Mathematics and English",
+    language_proficiency="English",
+)
+admission_criteria15 = AdmissionCriteria(
+    course=course15,
+    IB_Score=39,
+    subject_requirements="German",
+    language_proficiency="German",
+)
+admission_criteria16 = AdmissionCriteria(
+    course=course16,
+    IB_Score=38,
+    subject_requirements="Programming and English",
+    language_proficiency="English",
+)
+admission_criteria17 = AdmissionCriteria(
+    course=course17,
+    IB_Score=41,
+    subject_requirements="Mathematics and English",
+    language_proficiency="English",
+)
+admission_criteria18 = AdmissionCriteria(
+    course=course18,
+    IB_Score=42,
+    subject_requirements="German",
+    language_proficiency="German",
+)
+admission_criteria19 = AdmissionCriteria(
+    course=course19,
+    IB_Score=43,
+    subject_requirements="Mathematics and English",
+    language_proficiency="English",
+)
+admission_criteria20 = AdmissionCriteria(
+    course=course20,
+    IB_Score=39,
+    subject_requirements="German",
+    language_proficiency="German",
+)
+
+with app.app_context():
+    db.session.add(admission_criteria1)
+    db.session.add(admission_criteria2)
+    db.session.add(admission_criteria3)
+    db.session.add(admission_criteria4)
+    db.session.add(admission_criteria5)
+    db.session.add(admission_criteria6)
+    db.session.add(admission_criteria7)
+    db.session.add(admission_criteria8)
+    db.session.add(admission_criteria9)
+    db.session.add(admission_criteria10)
+    db.session.add(admission_criteria11)
+    db.session.add(admission_criteria12)
+    db.session.add(admission_criteria13)
+    db.session.add(admission_criteria14)
+    db.session.add(admission_criteria15)
+    db.session.add(admission_criteria16)
+    db.session.add(admission_criteria17)
+    db.session.add(admission_criteria18)
+    db.session.add(admission_criteria19)
+    db.session.add(admission_criteria20)
+    db.session.commit()
 
 
 @app.route("/")
@@ -111,25 +326,110 @@ def profile():
     if not g.user:
         return redirect(url_for("login"))
 
-    return render_template("profile2.html")
+    filter_options = [
+        {"name": "Country", "options": ["Austria", "Germany"]},
+        {"name": "Course", "options": ["Informatics", "Chemistry"]},
+        {"name": "Language", "options": ["English", "German"]},
+        {
+            "name": "IB Score",
+            "options": ["36", "37", "38", "39", "40", "41", "42", "43", "44"],
+        },
+    ]
 
+    country = {"name": "Country", "options": ["Austria", "Germany"]}
+    course = {"name": "Course", "options": ["Informatics", "Chemistry"]}
+    language = {"name": "Language", "options": ["English", "German"]}
+    ib_score = {
+        "name": "IB Score",
+        "options": ["36", "37", "38", "39", "40", "41", "42", "43", "44"],
+    }
+
+    return render_template(
+        "profile.html",
+        filter_options=filter_options,
+        country=country,
+        course=course,
+        language=language,
+        ib_score=ib_score,
+    )
+
+
+@app.route("/profile/results", methods=["GET"])
+def profile_results():
+    # Get the filter choices from the URL parameters
+    # countries = Country.query.all()
+    # universities = University.query.all()
+    # courses = Course.query.all()
+    # admission_criteria = AdmissionCriteria.query.all()
+    # country = request.args.get("choices-single-defaul[0]")
+    # course = request.args.get("choices-single-defaul[1]")
+    # language = request.args.get("choices-single-defaul[2]")
+    # ib_score = request.args.get("choices-single-defaul[3]")
+
+    country = "Austria"
+    course = "Informatics"
+    language = "German"
+    ib_score = "39"
+    # Query the database to retrieve the corresponding university
+
+    universities = (
+        db.session.query(University)
+        .join(Country)
+        .join(Course)
+        .join(AdmissionCriteria)
+        .filter(Country.name == country)
+        .filter(Course.name == course)
+        .filter(AdmissionCriteria.IB_Score == ib_score)
+        .filter(AdmissionCriteria.language_proficiency == language)
+        .all()
+    )
+
+    return render_template(
+        "profile_results.html",
+        universities=universities,
+        country=country,
+        course=course,
+        language=language,
+        ib_score=ib_score,
+    )
+
+    # if university:
+    # University found, do something with it
+    # For example, return the university name in the response
+    # return render_template(
+    #     "index.html",
+    #     countries=countries,
+    #     universities=universities,
+    #     courses=courses,
+    #     admission_criteria=admission_criteria,
+    # )
+    # return university.name
+    # else:
+    # University not found, handle the case accordingly
+    # return render_template(
+    #     "index.html",
+    #     countries=countries,
+    #     universities=universities,
+    #     courses=courses,
+    #     admission_criteria=admission_criteria,
+    # )
+    # return "University not found"
+
+
+#####################################################################################
 
 # @app.route("/index")
 # def index():
 #     countries = Country.query.all()
 #     university = University.query.all()
-#     user = User.query.all()
 #     course = Course.query.all()
 #     admission_criteria = AdmissionCriteria.query.all()
-#     feedback = Feedback.query.all()
 #     return render_template(
 #         "index.html",
 #         countries=countries,
 #         university=university,
-#         user=user,
 #         course=course,
 #         admission_criteria=admission_criteria,
-#         feedback=feedback,
 #     )
 
 
@@ -173,8 +473,12 @@ users.append(User(id=1, username="admin", password="admin"))
 
 #####################################################################################
 
+
 if __name__ == "__main__":
     app.run(debug=True)
+    # when closing the app, the database is deleted
+    # with app.app_context():
+    #     db.drop_all()
 
 # STRUCTURE OF THE DATABASE
 # **Table: Countries**
@@ -221,29 +525,6 @@ if __name__ == "__main__":
 # | --- | --- | --- | --- | --- |
 # |  |  |  |  |  |
 # |  |  |  |  |  |
-
-# **Table: Users**
-
-# - user_id (Primary Key)
-# - username
-# - password
-
-# | User ID | Username | Password |
-# | --- | --- | --- |
-# |  |  |  |
-# |  |  |  |
-
-# **Table: Scores**
-
-# - score_id (Primary Key)
-# - user_id (Foreign Key referencing Users.user_id)
-# - course_id (Foreign Key referencing Courses.course_id)
-# - score
-
-# | Score ID | User ID | Course ID | Score |
-# | --- | --- | --- | --- |
-# |  |  |  |  |
-# |  |  |  |  |
 
 # **Table: Feedback**
 

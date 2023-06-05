@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Search Results</title>
+  </head>
+  <body>
+    <h1>Search Results</h1>
+    <table>
+      <tr>
+        <th>Admission Criteria ID</th>
+        <th>Course ID</th>
+        <th>IB Score</th>
+        <th>Subject Requirements</th>
+        <th>Language Proficiency</th>
+      </tr>
+      {% for result in results %}
+      <tr>
+        <td>{{ result.admission_criteria_id }}</td>
+        <td>{{ result.course_id }}</td>
+        <td>{{ result.ib_score }}</td>
+        <td>{{ result.subject_requirements }}</td>
+        <td>{{ result.language_proficiency }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </body>
+</html>
