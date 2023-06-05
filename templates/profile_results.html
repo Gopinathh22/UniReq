@@ -52,18 +52,13 @@
         $("#feedbackForm").submit(function (event) {
           event.preventDefault();
           var feedback = $("#feedbackText").val();
-          // Use AJAX or fetch API to send the feedback data to the server and add it to the database
-          // Example AJAX code:
+
           $.ajax({
             url: "/submit-feedback",
             method: "POST",
             data: { feedback: feedback },
-            success: function (response) {
-              // Handle the success response if needed
-            },
-            error: function (xhr, status, error) {
-              // Handle the error if needed
-            },
+            success: function (response) {},
+            error: function (xhr, status, error) {},
           });
         });
       });
