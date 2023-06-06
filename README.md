@@ -89,3 +89,5 @@ Before you can rush in, confirm you have Python 3.11.xx (I have 3.11.3) and all 
 Next create the tables in the terminal, or if you are lazy, run the app.py two times (the data will duplicate, if you don't care) and the server is up. Copy the localhost and enjoy
 PS: Username: admin Password: admin
 
+## 
+All the JavaScript is from HTML template I took from online, as it there making the design + everything realated to design is out of the scope of this assignment.
